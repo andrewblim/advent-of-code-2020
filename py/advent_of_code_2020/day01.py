@@ -3,13 +3,13 @@ import itertools
 
 
 def find_sum_pair(vals, target):
-    for x, y in itertools.product(vals, repeat=2):
+    for x, y in itertools.combinations(vals, r=2):
         if x + y == target:
             return x, y
 
 
 def find_sum_triplet(vals, target):
-    for x, y, z in itertools.product(vals, repeat=3):
+    for x, y, z in itertools.combinations(vals, r=3):
         if x + y + z == target:
             return x, y, z
 
