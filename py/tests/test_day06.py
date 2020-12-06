@@ -2,7 +2,7 @@ from .context import advent_of_code_2020
 from advent_of_code_2020.day06 import *
 
 
-def test_seat():
+def test_yeses():
     test_data = """
 abc
 
