@@ -5,7 +5,7 @@ import scala.io.Source
 object Day01 {
 
   def findSumCombination(vals: Vector[Int], target: Int, n: Int): Option[Vector[Int]] = {
-    vals.combinations(n).find((x: Vector[Int]) => x.sum == target)
+    vals.combinations(n).find(_.sum == target)
   }
 
   def main(args: Array[String]): Unit = {

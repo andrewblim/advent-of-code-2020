@@ -1,8 +1,10 @@
 package day01
 
 import org.scalatest._
+import flatspec._
+import matchers._
 
-class Day01Spec extends FlatSpec with Matchers {
+class Day01Spec extends AnyFlatSpec with should.Matchers {
   import day01.Day01._
 
   "The Day01 object" should "find combinations" in {

@@ -3,4 +3,5 @@ input/
 .pytest_cache
 __pycache__
 target/
+.bsp
 .metals
