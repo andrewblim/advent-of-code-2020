@@ -24,12 +24,12 @@ def execute_instructions(instructions, start_pos=0, start_acc=0):
             pos += 1
         else:
             raise RuntimeError(f"unrecognized op {op}")
-    if pos > len(instructions):
-        raise RuntimeError(f"sent beyond one past the last instruction: {pos}")
-    elif pos == len(instructions):
-        return first_visit, acc, True
+    if pos == len(instructions):
+        return first_visit, acc, 0
+    elif pos < len(instructions):
+        return first_visit, acc, 1
     else:
-        return first_visit, acc, False
+        return first_visit, acc, 2
 
 
 def fix_jmp_instruction(instructions):
@@ -37,8 +37,8 @@ def fix_jmp_instruction(instructions):
         if op == "jmp":
             new_instructions = list(instructions)
             new_instructions[i] = ("nop", arg)
-            _, acc, success = execute_instructions(new_instructions)
-            if success:
+            _, acc, exit_code = execute_instructions(new_instructions)
+            if exit_code == 0:
                 return i, acc
     raise RuntimeError("could not fix program")
 
