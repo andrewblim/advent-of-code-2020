@@ -32,11 +32,17 @@ def execute_instructions(instructions, start_pos=0, start_acc=0):
         return first_visit, acc, 2
 
 
-def fix_jmp_instruction(instructions):
+def fix_jmp_nop_instruction(instructions):
     for i, (op, arg) in enumerate(instructions):
         if op == "jmp":
             new_instructions = list(instructions)
             new_instructions[i] = ("nop", arg)
+            _, acc, exit_code = execute_instructions(new_instructions)
+            if exit_code == 0:
+                return i, acc
+        elif op == "nop":
+            new_instructions = list(instructions)
+            new_instructions[i] = ("jmp", arg)
             _, acc, exit_code = execute_instructions(new_instructions)
             if exit_code == 0:
                 return i, acc
@@ -51,5 +57,5 @@ if __name__ == "__main__":
     _, acc, _ = execute_instructions(instructions)
     print(acc)
     print("Part 2:")
-    _, acc = fix_jmp_instruction(instructions)
+    _, acc = fix_jmp_nop_instruction(instructions)
     print(acc)

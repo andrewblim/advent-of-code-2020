@@ -20,5 +20,5 @@ def test_execute_instructions():
     assert execute_instructions(instructions) == \
         ({0: 1, 1: 2, 2: 3, 3: 6, 4: 7, 6: 4, 7: 5}, 5, 1)
 
-def test_fix_jmp_instruction():
-    assert fix_jmp_instruction(instructions) == (7, 8)
+def test_fix_jmp_nop_instruction():
+    assert fix_jmp_nop_instruction(instructions) == (7, 8)
