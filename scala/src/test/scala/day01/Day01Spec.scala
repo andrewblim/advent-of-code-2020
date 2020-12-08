@@ -9,7 +9,7 @@ class Day01Spec extends AnyFlatSpec with should.Matchers {
 
   "The Day01 object" should "find combinations" in {
     val vals = Vector(1721, 979, 366, 299, 675, 1456)
-    findSumCombination(vals, 2020, 2) shouldEqual Vector(1721, 979)
-    findSumCombination(vals, 2020, 3) shouldEqual Vector(979, 366, 675)
+    findSumCombination(vals, 2020, 2) shouldEqual Some(Vector(1721, 299))
+    findSumCombination(vals, 2020, 3) shouldEqual Some(Vector(979, 366, 675))
   }
 }
