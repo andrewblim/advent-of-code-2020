@@ -20,14 +20,12 @@ def check_xmas_code(code, n):
 def find_contiguous_sum(code, target):
     partial_sums = list(code)
     for offset in range(1, len(code)):
-        # print(f"Offset: {offset}")
-        # first pass: add code[1] to ps[0], code[2] to ps[1], ..., code[n] to ps[n-1], drop ps[n]
-        # second pass: add code[2] to ps[0], code[3] to ps[1], ..., code[n] to ps[n-2], drop ps[n-1]
-        # ...
-        # until: add code[n-1] to ps[0], drop ps[1]
+        # partial_sums tracks the sum of the range starting at 0, 1, ...
+        # and covering `offset` numbers. So on the first pass, it has the
+        # sum over 0:2, 1:3, 2:4, ..., on the second pass it has 0:3, 1:4,
+        # etc. We break early if we find a subset matching the target sum.
         new_partial_sums = []
         for start in range(0, len(code) - offset):
-            # print(f"Start: {start}")
             x = partial_sums[start] + code[start + offset]
             if x == target:
                 return (start, start + offset)
