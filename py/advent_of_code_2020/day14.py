@@ -34,7 +34,7 @@ def masked_values2(x, m1, m2):
     i = 0
     while m1 > 0:
         if m1 % 2 == 1:
-            values.extend([v + 2**i for v in values])
+            values.extend([v + (1 << i) for v in values])
         i += 1
         m1 >>= 1
     return values
