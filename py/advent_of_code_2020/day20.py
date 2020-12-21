@@ -1,9 +1,8 @@
 import sys
 import re
 from collections import namedtuple
-from itertools import islice
 
-PlacedTile = namedtuple("PlacedTile", ["id", "north", "south", "east", "west"])
+PlacedTile = namedtuple("PlacedTile", ["id", "north", "south", "east", "west", "image"])
 
 
 # edges are interpreted as 0/1, most significant digit first
@@ -20,6 +19,10 @@ def flip_edge(x, n):
     return y
 
 
+def flip_image_horiz(image):
+    return "\n".join([y[::-1] for y in image.split("\n")])
+
+
 def flip_tile_horiz(x, n):
     return PlacedTile(
         id=x.id,
@@ -27,7 +30,17 @@ def flip_tile_horiz(x, n):
         south=flip_edge(x.south, n),
         east=x.west,
         west=x.east,
+        image=flip_image_horiz(x.image),
     )
+
+
+def rotate_image_cw(image):
+    image = image.split("\n")
+    x_max = len(image[0])
+    y_max = len(image)
+    return "\n".join(["".join([image[y_max-1-i][j]
+                               for i in range(y_max)])
+                      for j in range(x_max)])
 
 
 def rotate_tile_cw(x, n):
@@ -37,6 +50,7 @@ def rotate_tile_cw(x, n):
         east=x.north,
         south=flip_edge(x.east, n),
         west=x.south,
+        image=rotate_image_cw(x.image),
     )
 
 
@@ -57,6 +71,7 @@ def parse_tiles(input):
             east=edge_e,
             south=edge_s,
             west=edge_w,
+            image="\n".join([x[1:(n-1)] for x in tile_data[2:n]]),
         )
         tiles.extend([tile, flip_tile_horiz(tile, n)])
         tile = rotate_tile_cw(tile, n)
@@ -81,7 +96,6 @@ def zigzag(n):
 
 
 def find_tiling(tiles, progress, n_to_xy, xy_to_n):
-    # print(f"{' ' * len(progress)}progress {[x.id for x in progress]}")
     if len(tiles) == 0:
         return progress
     x, y = n_to_xy[len(progress)]
@@ -96,6 +110,46 @@ def find_tiling(tiles, progress, n_to_xy, xy_to_n):
             )
             if result is not None:
                 return result
+
+
+def combine_image(images, xy_to_n):
+    combined = []
+    n = int(len(images)**0.5)
+    for y in range(n):
+        row = []
+        for x in range(n):
+            row.append(images[xy_to_n[(x,y)]].split("\n"))
+        combined.append(["".join(z) for z in zip(*row)])
+    return "\n".join([y for x in combined for y in x])
+
+
+def find_dragons(image):
+    image_arr = image.split("\n")
+    n = image.index("\n")  # assume square
+    dragon_text = "                  # \n#    ##    ##    ###\n #  #  #  #  #  #   "
+    locations = []
+    for r in range(4):
+        dragon = dragon_text.split("\n")
+        coords = [(x, y) for y, row in enumerate(dragon) for x, c in enumerate(row)
+                  if c == "#"]
+        for y in range(n - len(dragon)):
+            for x in range(n - len(dragon[0])):
+                hits = [image_arr[p[1]+y][p[0]+x] == "#" for p in coords]
+                if all(hits):
+                    locations.extend([(p[0]+x, p[1]+y) for p in coords])
+        dragon_text = rotate_image_cw(dragon_text)
+    dragon_text = flip_image_horiz(dragon_text)
+    for r in range(4):
+        dragon = dragon_text.split("\n")
+        coords = [(x, y) for y, row in enumerate(dragon) for x, c in enumerate(row)
+                  if c == "#"]
+        for y in range(n - len(dragon)):
+            for x in range(n - len(dragon[0])):
+                hits = [image_arr[p[1]+y][p[0]+x] == "#" for p in coords]
+                if all(hits):
+                    locations.extend([(p[0]+x, p[1]+y) for p in coords])
+        dragon_text = rotate_image_cw(dragon_text)
+    return set(locations)
 
 
 if __name__ == "__main__":
@@ -116,3 +170,7 @@ if __name__ == "__main__":
     print([x.id for x in corners])
     print(corners[0].id * corners[1].id * corners[2].id * corners[3].id)
     print("Part 2:")
+    combined = combine_image([x.image for x in tiling], izz)
+    dragon_points = find_dragons(combined)
+    n_hash = len([x for x in combined if x == "#"])
+    print(n_hash - len(dragon_points))
